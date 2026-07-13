@@ -62,6 +62,7 @@ class Settings:
     camera_drift: bool = True
     audio: bool = False
     show_hud: bool = True
+    show_tips: bool = True
     use_telemetry: bool = True
     quality: str = "high"          # "low" | "med" | "high"
 

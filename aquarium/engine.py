@@ -58,7 +58,7 @@ class Engine:
         self.camera.update(dt)
         self.scene.update(dt)
         self.renderer.draw(self.scene, self.camera, dt)
-        self.hud.draw(self.canvas, self.scene, self._fps)
+        self.hud.draw(self.canvas, self.scene, self._fps, dt)
         if self.splash and not self.splash.done:
             self.splash.update(dt)
             self.splash.draw(self.canvas)

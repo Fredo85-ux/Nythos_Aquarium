@@ -93,7 +93,9 @@ aquarium/
   renderer.py                 Pillow water layer + pooled Canvas entity layer
   scene.py                    world + security-state machine
   engine.py                   timing loop + smoothed FPS
-  hud.py                      brand/status HUD + debug overlay
+  hud.py                      cyber dashboard (brand, system health, threat
+                               monitor, clock, tip panel) + debug overlay
+  tips.py                     rotating "Tip of the Tank" fact pool + fade
   splash.py                   startup loading sequence
   easter_eggs.py              hidden key sequences
   audio.py                    optional sonar pings (toggleable, safe no-op)
@@ -114,8 +116,14 @@ aquarium/
 boids behaviour + personalities, predator/threat state, sonar + AI-beam +
 glitch + alert-pulse effects, jellyfish/turtle/octopus/stingray/whale/shrimp,
 reef decor (coral/seaweed/treasure/ruins/rocks), bubbles/motes, camera drift,
-live telemetry mapping, cyber HUD + debug overlay, all listed easter eggs,
-toggleable audio, JSON settings.
+live telemetry mapping, all listed easter eggs, toggleable audio, JSON settings.
+
+**Cyber HUD** (ported from the native `.scr`'s Direct2D dashboard for visual
+parity across both builds): translucent Brand panel, a System Health panel
+(status line, CPU load, memory used/total, network throughput, process count,
+uptime), a Threat Monitor panel with a live risk-score bar, a clock + date
+panel, a fading "Tip of the Tank" panel cycling an offline pool of aquatic
+cybersecurity facts, a footer strip, and the hidden debug overlay.
 
 **Roadmap (spec stretch goals):** OpenGL-accelerated backend for very high entity
 counts, true bloom/depth-blur/caustics shaders, seamless looping ambient audio

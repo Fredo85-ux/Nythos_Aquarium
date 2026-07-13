@@ -26,8 +26,11 @@ except Exception:                      # pragma: no cover
 class Snapshot:
     cpu: float = 0.0          # 0..100
     mem: float = 0.0          # 0..100
+    mem_used_mb: float = 0.0
+    mem_total_mb: float = 0.0
     net_kbps: float = 0.0     # recent throughput
     processes: int = 0
+    uptime_hours: float = 0.0
     health: float = 100.0     # 0..100 endpoint health score
     risk: float = 8.0         # 0..100 composite risk
     net_spike: bool = False   # transient: a burst of network activity
@@ -64,8 +67,15 @@ class Telemetry:
 
     def _sample(self) -> Snapshot:
         cpu = psutil.cpu_percent(None)
-        mem = psutil.virtual_memory().percent
+        vm = psutil.virtual_memory()
+        mem = vm.percent
+        mem_used_mb = (vm.total - vm.available) / (1024 * 1024)
+        mem_total_mb = vm.total / (1024 * 1024)
         procs = len(psutil.pids())
+        try:
+            uptime_hours = max(0.0, (time.time() - psutil.boot_time()) / 3600.0)
+        except Exception:
+            uptime_hours = 0.0
 
         net = psutil.net_io_counters()
         kbps = 0.0
@@ -83,5 +93,6 @@ class Telemetry:
         proc_load = (procs - 200) * 0.03 if procs > 200 else 0.0
         risk = min(100.0, 6.0 + cpu * 0.25 + max(0.0, mem - 70) * 0.5 + proc_load)
 
-        return Snapshot(cpu=cpu, mem=mem, net_kbps=kbps, processes=procs,
+        return Snapshot(cpu=cpu, mem=mem, mem_used_mb=mem_used_mb, mem_total_mb=mem_total_mb,
+                        net_kbps=kbps, processes=procs, uptime_hours=uptime_hours,
                         health=health, risk=risk, net_spike=spike)
