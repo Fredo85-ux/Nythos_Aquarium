@@ -36,8 +36,6 @@ resource script, then compiles + links all of `src/*.cpp`.
 .\install.ps1 -Config    # open the settings dialog
 ```
 
-Or right-click `build\NythosCyberAquarium.scr` in Explorer → **Install**.
-
 ### Command-line switches (the standard screensaver contract)
 | Switch | Meaning |
 |--------|---------|
