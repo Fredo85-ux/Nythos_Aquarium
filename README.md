@@ -1,5 +1,5 @@
 # Nythos Cyber Aquarium — Windows Screensaver
-
+"Every security journey begins with a single ripple." 🐬
 A native **C++ / DirectX 11** Windows screensaver: a living reef aquarium that
 doubles as a calm cybersecurity dashboard. Autonomous fish, god rays, caustics,
 rising bubbles, HDR bloom, a semi-transparent cyber HUD fed by **real** system
