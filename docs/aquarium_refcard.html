@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nythos Aquarium Mode — Quick Reference</title>
+<style>
+  :root{
+    --deep:#05010e; --mid:#0b0420; --top:#180a36;
+    --violet:#9b5de5; --violet-hi:#be82ff; --cyan:#00e5ff; --blue:#2d7dff;
+    --emerald:#2bf5a0; --white:#e7ecff; --muted:#8a92c8; --threat:#ff3b63;
+    --line: rgba(155,93,229,.35);
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html,body{ margin:0; padding:0; }
+  @page{ size:Letter; margin:0; }
+  body{ font-family:"Segoe UI",Arial,sans-serif; color:var(--white); font-size:10px; line-height:1.42; }
+
+  .page{
+    position:relative; width:8.5in; height:11in; padding:0.42in 0.46in;
+    background:
+      radial-gradient(120% 70% at 18% -8%, rgba(123,55,200,.30), transparent 60%),
+      radial-gradient(120% 70% at 98% 4%, rgba(0,160,200,.16), transparent 55%),
+      linear-gradient(180deg,var(--top) 0%, var(--mid) 44%, var(--deep) 100%);
+    overflow:hidden;
+  }
+  .page::after{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
+  .frame{ position:absolute; inset:.26in; border:1px solid var(--line); border-radius:12px;
+    box-shadow: inset 0 0 46px rgba(123,55,200,.10); pointer-events:none; }
+  .frame::before,.frame::after{ content:""; position:absolute; width:14px; height:14px; border:2px solid var(--cyan); opacity:.7;}
+  .frame::before{ left:-1px; top:-1px; border-right:none; border-bottom:none; border-radius:6px 0 0 0;}
+  .frame::after{ right:-1px; bottom:-1px; border-left:none; border-top:none; border-radius:0 0 6px 0;}
+  .content{ position:relative; z-index:2; height:100%; display:flex; flex-direction:column; }
+
+  .head{ display:flex; align-items:flex-end; justify-content:space-between; border-bottom:1px solid var(--line);
+    padding-bottom:8px; margin-bottom:10px; }
+  .head h1{ font-size:24px; margin:0; letter-spacing:.12em; text-shadow:0 0 16px rgba(155,93,229,.7); }
+  .head .sub{ font-family:Consolas,monospace; letter-spacing:.34em; font-size:9px; color:var(--cyan);
+    text-transform:uppercase; margin-top:3px; }
+  .head .rc{ font-family:Consolas,monospace; font-size:9px; color:var(--muted); letter-spacing:.18em; text-align:right;}
+
+  .cols{ display:flex; gap:11px; flex:1; }
+  .col{ flex:1; display:flex; flex-direction:column; gap:10px; }
+
+  .panel{ background:linear-gradient(160deg, rgba(20,10,46,.85), rgba(8,4,20,.82));
+    border:1px solid var(--line); border-radius:10px; padding:9px 11px;
+    box-shadow: inset 0 0 20px rgba(0,160,220,.06); }
+  .panel h2{ font-size:11px; margin:0 0 6px; color:var(--cyan); letter-spacing:.05em; text-transform:uppercase;
+    font-family:Consolas,monospace; border-left:3px solid var(--violet-hi); padding-left:8px; }
+
+  .kv{ display:flex; align-items:flex-start; margin:3px 0; }
+  .kv .k{ flex:0 0 92px; }
+  .kv .d{ flex:1; color:#d6dcff; }
+  .chip{ display:inline-block; font-family:Consolas,monospace; font-size:9px; color:var(--cyan);
+    border:1px solid var(--line); border-radius:5px; padding:0 6px; margin:1px 1px; background:rgba(0,160,220,.06); }
+  .chip.r{ color:var(--threat); border-color:rgba(255,59,99,.4);} .chip.e{ color:var(--emerald);} .chip.v{ color:var(--violet-hi);}
+  code{ font-family:Consolas,monospace; color:var(--emerald); }
+
+  table{ width:100%; border-collapse:collapse; }
+  td{ padding:3px 4px; border-bottom:1px solid rgba(155,93,229,.14); vertical-align:top; color:#dfe4ff; font-size:9.5px;}
+  tr:last-child td{ border-bottom:none; }
+  .sig td:first-child{ width:50%; }
+  .dot{ display:inline-block; width:8px;height:8px;border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .tag-h{ color:var(--emerald);} .tag-b{ color:var(--violet-hi);} .tag-t{ color:var(--threat);}
+
+  pre.ascii{ font-family:Consolas,monospace; font-size:9px; line-height:1.12; color:var(--cyan);
+    text-shadow:0 0 7px rgba(0,229,255,.5); margin:4px 0 0; white-space:pre; }
+  pre.ascii .v{ color:var(--violet-hi);} pre.ascii .o{ color:#ffb24d;}
+
+  .check{ margin:0; padding:0; list-style:none; }
+  .check li{ position:relative; padding-left:18px; margin:3px 0; color:#dfe4ff; }
+  .check li::before{ content:"▢"; position:absolute; left:0; color:var(--cyan); top:-1px; }
+
+  .foot{ border-top:1px solid var(--line); margin-top:10px; padding-top:7px;
+    display:flex; justify-content:space-between; font-family:Consolas,monospace; font-size:8px;
+    color:var(--muted); letter-spacing:.14em; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame"></div>
+  <div class="content">
+
+    <div class="head">
+      <div>
+        <h1>AQUARIUM&nbsp;MODE</h1>
+        <div class="sub">Quick Reference Card</div>
+      </div>
+      <div class="rc">NYTHOS // v1.0.0<br>SECURE · MONITOR · ANALYZE · DEFEND</div>
+    </div>
+
+    <div class="cols">
+      <!-- LEFT COLUMN -->
+      <div class="col">
+
+        <div class="panel">
+          <h2>Controls</h2>
+          <div class="kv"><div class="k"><span class="chip">Esc</span></div><div class="d">exit</div></div>
+          <div class="kv"><div class="k"><span class="chip">F11</span><span class="chip">F</span></div><div class="d">toggle fullscreen</div></div>
+          <div class="kv"><div class="k"><span class="chip">F2</span></div><div class="d">drop to windowed dashboard</div></div>
+          <div class="kv"><div class="k"><span class="chip">H</span></div><div class="d">toggle HUD</div></div>
+          <div class="kv"><div class="k"><span class="chip">M</span></div><div class="d">toggle audio</div></div>
+          <div class="kv"><div class="k"><span class="chip r">T</span></div><div class="d">demo a threat (spawn predator)</div></div>
+          <div class="kv"><div class="k"><span class="chip">S</span></div><div class="d">manual sonar sweep</div></div>
+          <div class="kv"><div class="k"><span class="chip">W</span></div><div class="d">summon a whale</div></div>
+          <div class="kv"><div class="k"><span class="chip">+</span><span class="chip">&minus;</span></div><div class="d">add / remove a fish</div></div>
+        </div>
+
+        <div class="panel">
+          <h2>Run modes</h2>
+          <table>
+            <tr><td><code>windowed</code></td><td>dev / background dashboard</td></tr>
+            <tr><td><code>fullscreen</code></td><td>splash + full experience</td></tr>
+            <tr><td><code>screensaver</code></td><td>exits on any input</td></tr>
+            <tr><td><code>kiosk</code></td><td>conference / demo machine</td></tr>
+          </table>
+          <div style="margin-top:6px;color:var(--muted)"><code>python -m aquarium --mode &lt;mode&gt;</code><br>
+          or <code>NythosAquarium.exe --mode &lt;mode&gt;</code></div>
+        </div>
+
+        <div class="panel">
+          <h2>Easter eggs</h2>
+          <table>
+            <tr><td>Konami code</td><td>fish become dragons</td></tr>
+            <tr><td>type <code>fredo</code></td><td>scuba diver + glowing laptop</td></tr>
+            <tr><td>type <code>mythos</code></td><td>giant phoenix silhouette</td></tr>
+            <tr><td>type <code>debug</code></td><td>FPS / counts / memory overlay</td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h2>Assess in 60 seconds</h2>
+          <ul class="check">
+            <li>Fish school &amp; wander organically; none identical</li>
+            <li>Press <code>T</code> → water darkens, predator, scatter</li>
+            <li>Press <code>S</code> → sonar ring, curious fish approach</li>
+            <li>AI beam periodically scans &amp; clears a fish</li>
+            <li>Type <code>debug</code> → FPS steady, RSS memory flat</li>
+            <li>Palette stays violet/cyan; red only on threat</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col">
+
+        <div class="panel">
+          <h2>Signal → Visual cheat sheet</h2>
+          <table class="sig">
+            <tr><td>Calm violet water, soft schooling</td><td>endpoint healthy</td></tr>
+            <tr><td>Livelier fish, stronger current</td><td>high CPU load</td></tr>
+            <tr><td>Water darkens &amp; reddens + predator + scatter</td><td>risk threshold crossed</td></tr>
+            <tr><td>Expanding cyan sonar ring</td><td>network spike</td></tr>
+            <tr><td>Dashed beam + reticle, fish pulses emerald</td><td>AI analysis (then cleared)</td></tr>
+            <tr><td>Bubbles &amp; drifting motes</td><td>ambient life</td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h2>States</h2>
+          <div class="kv"><div class="k"><span class="dot" style="background:var(--emerald)"></span><span class="tag-h">SECURE</span></div>
+            <div class="d">healthy — calm, relaxed schooling, soft bubbles</div></div>
+          <div class="kv"><div class="k"><span class="dot" style="background:var(--violet-hi)"></span><span class="tag-b">ACTIVE</span></div>
+            <div class="d">busy — high CPU; faster fish, stronger current</div></div>
+          <div class="kv"><div class="k"><span class="dot" style="background:var(--threat)"></span><span class="tag-t">THREAT</span></div>
+            <div class="d">risk high — predator hunts, schools scatter, glitch</div></div>
+        </div>
+
+        <div class="panel">
+          <h2>HUD legend</h2>
+          <table>
+            <tr><td>top-left</td><td><b>NYTHOS · AQUARIUM MODE</b> (brand)</td></tr>
+            <tr><td>top-right</td><td>status · <b>Health</b> &amp; <b>Risk</b> (0–100)</td></tr>
+            <tr><td>top-right</td><td><b>CPU%</b> · <b>MEM%</b> · <b>NET KB/s</b></td></tr>
+            <tr><td>bottom-left</td><td>debug overlay (FPS, counts, RSS) — type <code>debug</code></td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h2>Field marks</h2>
+          <div style="display:flex; gap:8px;">
+            <div style="flex:1">
+              <div style="color:var(--violet-hi);font-family:Consolas;font-size:9px;letter-spacing:.1em">ANGELFISH</div>
+              <pre class="ascii"><span class="v">     /\
+    /::\_
+  _/::::: \
+&lt;=&lt;:::::: O&gt;
+  ‾\::::: /
+    \::/‾</span></pre>
+            </div>
+            <div style="flex:1">
+              <div style="color:#ffb24d;font-family:Consolas;font-size:9px;letter-spacing:.1em">KOI</div>
+              <pre class="ascii"><span class="o">      ______
+ _.~ /&middot;&deg;:&deg;&middot;\ ~._
+&lt;~(:::&deg;:&middot;:&deg;:::: O&gt;~
+ '~ \&middot;&deg;:&deg;&middot;/ ~'
+      ‾‾‾‾‾‾</span></pre>
+            </div>
+          </div>
+          <div style="color:var(--muted);margin-top:4px">Predator (ransomware) = large dashed silhouette; jellyfish = dome + trailing tentacles.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>NYTHOS // AQUARIUM MODE — QUICK REFERENCE</span>
+      <span>“IN THE DEPTHS OF DATA, WE FIND THE TRUTH.”</span>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

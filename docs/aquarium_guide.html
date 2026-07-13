@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nythos Aquarium Mode — Field Guide &amp; Assessment</title>
+<style>
+  :root{
+    --deep:#05010e; --mid:#0b0420; --top:#180a36; --panel:#0d0722;
+    --violet:#9b5de5; --violet-hi:#be82ff; --cyan:#00e5ff; --blue:#2d7dff;
+    --emerald:#2bf5a0; --white:#e7ecff; --muted:#8a92c8; --threat:#ff3b63;
+    --line: rgba(155,93,229,.35);
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html,body{ margin:0; padding:0; }
+  body{ font-family:"Segoe UI",Arial,sans-serif; color:var(--white); font-size:11.5px; line-height:1.55; }
+  @page{ size:Letter; margin:0; }
+
+  .page{
+    position:relative; width:8.5in; min-height:11in; padding:0.62in 0.66in;
+    background:
+      radial-gradient(120% 80% at 20% -5%, rgba(123,55,200,.28), transparent 60%),
+      radial-gradient(120% 80% at 95% 8%, rgba(0,160,200,.16), transparent 55%),
+      linear-gradient(180deg,var(--top) 0%, var(--mid) 42%, var(--deep) 100%);
+    break-after:page; overflow:hidden;
+  }
+  .page:last-child{ break-after:auto; }
+  /* faint scanline / grid texture */
+  .page::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+  }
+  .frame{ position:absolute; inset:.34in; border:1px solid var(--line); border-radius:14px;
+    box-shadow: inset 0 0 50px rgba(123,55,200,.10); pointer-events:none; }
+  .frame::before,.frame::after{ content:""; position:absolute; width:16px; height:16px; border:2px solid var(--cyan); opacity:.7;}
+  .frame::before{ left:-1px; top:-1px; border-right:none; border-bottom:none; border-radius:6px 0 0 0;}
+  .frame::after{ right:-1px; bottom:-1px; border-left:none; border-top:none; border-radius:0 0 6px 0;}
+  .content{ position:relative; z-index:2; }
+
+  .eyebrow{ font-family:Consolas,monospace; letter-spacing:.32em; font-size:9px; color:var(--cyan);
+    text-transform:uppercase; }
+  h1{ font-size:30px; margin:.1em 0 .1em; letter-spacing:.16em; color:#fff;
+    text-shadow:0 0 18px rgba(155,93,229,.7); }
+  h2{ font-size:18px; margin:.2em 0 .5em; letter-spacing:.06em; color:var(--violet-hi);
+    text-shadow:0 0 12px rgba(155,93,229,.5); border-left:3px solid var(--cyan); padding-left:10px; }
+  h3{ font-size:13px; margin:1.1em 0 .3em; color:var(--cyan); letter-spacing:.04em;
+    text-transform:uppercase; font-family:Consolas,monospace; }
+  p{ margin:.45em 0; color:#d6dcff; }
+  b,strong{ color:#fff; }
+  .muted{ color:var(--muted); }
+  a{ color:var(--cyan); text-decoration:none; }
+
+  .panel{ background:linear-gradient(160deg, rgba(20,10,46,.85), rgba(8,4,20,.85));
+    border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:10px 0;
+    box-shadow: inset 0 0 24px rgba(0,160,220,.06); }
+  .grid2{ display:flex; gap:12px; } .grid2 > *{ flex:1; }
+
+  table{ width:100%; border-collapse:collapse; margin:8px 0; font-size:10.5px; }
+  th{ background:linear-gradient(180deg, rgba(155,93,229,.30), rgba(155,93,229,.12));
+    color:#fff; text-align:left; padding:6px 9px; letter-spacing:.04em;
+    border-bottom:1px solid var(--line); font-family:Consolas,monospace; font-size:9.5px; text-transform:uppercase;}
+  td{ padding:6px 9px; border-bottom:1px solid rgba(155,93,229,.14); vertical-align:top; color:#dfe4ff;}
+  tr:nth-child(even) td{ background:rgba(123,55,200,.06); }
+  td code, p code, li code{ font-family:Consolas,monospace; color:var(--emerald); }
+
+  .chip{ display:inline-block; font-family:Consolas,monospace; font-size:10px; color:var(--cyan);
+    border:1px solid var(--line); border-radius:6px; padding:1px 7px; margin:1px 2px;
+    background:rgba(0,160,220,.06); }
+  .tag{ color:var(--emerald); } .tagv{ color:var(--violet-hi);} .tagr{ color:var(--threat);}
+
+  pre.ascii{ font-family:Consolas,monospace; font-size:10px; line-height:1.15; color:var(--cyan);
+    text-shadow:0 0 8px rgba(0,229,255,.55); margin:6px 0; white-space:pre; }
+  pre.ascii .v{ color:var(--violet-hi); } pre.ascii .e{ color:var(--emerald);} pre.ascii .o{ color:#ffb24d;}
+
+  ul{ margin:.3em 0 .3em 0; padding-left:18px; } li{ margin:.22em 0; color:#dfe4ff; }
+  .check li{ list-style:none; position:relative; padding-left:22px; margin:.3em 0; }
+  .check li::before{ content:"▢"; position:absolute; left:0; color:var(--cyan); font-size:13px; top:-1px;}
+
+  .callout{ border-left:3px solid var(--emerald); background:rgba(43,245,160,.06);
+    padding:8px 12px; border-radius:0 8px 8px 0; margin:10px 0; }
+  .callout.warn{ border-color:var(--threat); background:rgba(255,59,99,.07); }
+  .callout .lbl{ font-family:Consolas,monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase; }
+  .callout.warn .lbl{ color:var(--threat);} .callout .lbl{ color:var(--emerald);}
+
+  .footer{ position:absolute; left:.66in; right:.66in; bottom:.42in; z-index:3;
+    display:flex; justify-content:space-between; font-family:Consolas,monospace; font-size:8.5px;
+    color:var(--muted); letter-spacing:.12em; border-top:1px solid var(--line); padding-top:6px; }
+
+  /* cover */
+  .cover{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; min-height:9.6in; }
+  .shield{ font-family:Consolas,monospace; color:var(--violet-hi); font-size:13px; line-height:1.05;
+    text-shadow:0 0 22px rgba(155,93,229,.8); white-space:pre; margin-bottom:6px; }
+  .cover h1{ font-size:52px; letter-spacing:.34em; margin:.1em 0 0; }
+  .cover .sub{ font-family:Consolas,monospace; letter-spacing:.42em; font-size:12px; color:var(--cyan);
+    text-transform:uppercase; margin:.2em 0 1.4em; }
+  .school{ font-family:Consolas,monospace; font-size:13px; line-height:1.7; color:var(--cyan);
+    text-shadow:0 0 10px rgba(0,229,255,.5); white-space:pre; }
+  .ver{ margin-top:1.6em; font-family:Consolas,monospace; font-size:10px; color:var(--muted); letter-spacing:.2em;}
+  .toc td{ font-size:11px; } .toc .n{ color:var(--cyan); font-family:Consolas,monospace; width:34px;}
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content cover">
+    <div class="eyebrow">NYTHOS&nbsp;SECURITY &nbsp;·&nbsp; DIGITAL SECURITY SIMPLIFIED</div>
+    <div class="shield">      /\
+     /  \
+    / /\ \
+   / /__\ \
+  /__/  \__\
+   \  \  /  /
+    \  \/  /
+     \    /
+      \  /
+       \/</div>
+    <h1>AQUARIUM&nbsp;MODE</h1>
+    <div class="sub">Field Guide &amp; Assessment</div>
+    <div class="school">&lt;==(::::::: O&gt;     &lt;~~(::::&deg;:&middot;:&deg;::::: O&gt;~     &gt;&lt;(&deg;&gt;
+   &lt;&lt;&lt;::&middot;:&middot;:&middot; o&gt;      .-^-.      &lt;=:::::::::::::&middot;&deg;&gt;
+                       ( o o )
+                        )|(</div>
+    <div class="ver">VERSION 1.0.0 &nbsp;·&nbsp; SECURE · MONITOR · ANALYZE · DEFEND</div>
+  </div>
+  <div class="footer"><span>NYTHOS // AQUARIUM MODE</span><span>“IN THE DEPTHS OF DATA, WE FIND THE TRUTH.”</span></div>
+</section>
+
+<!-- ============================ OVERVIEW + TOC ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">01 — Orientation</div>
+    <h1 style="font-size:26px">What Aquarium Mode Is</h1>
+    <p>Aquarium Mode is an immersive, cyberpunk ASCII aquarium that doubles as a live
+    endpoint-health visualization for the Nythos platform. It runs as a splash screen,
+    idle screensaver, background dashboard, demo, or conference kiosk. The reef is alive,
+    and it is <b>driven by real telemetry</b> — the tank visibly reflects the health of the
+    machine it runs on. The goal is a single, calm message: <i>“this security software feels alive.”</i></p>
+
+    <div class="panel">
+      <h3 style="margin-top:0">The Core Idea</h3>
+      <p style="margin:0">Every fish is an autonomous agent. Every visual maps to a real signal.
+      A calm purple tank means a healthy endpoint; a darkening tank with a circling predator
+      means risk is climbing. Nothing is random when live data is available.</p>
+    </div>
+
+    <h2>Contents</h2>
+    <table class="toc">
+      <tr><td class="n">02</td><td>Architecture at a glance — the engine &amp; its modules</td></tr>
+      <tr><td class="n">03</td><td>Anatomy of the tank — water, reef, particles, camera</td></tr>
+      <tr><td class="n">04</td><td>The inhabitants — fish tiers, koi &amp; angelfish, boids AI, fauna</td></tr>
+      <tr><td class="n">05</td><td>Security visualization — states, predator, sonar, AI beam</td></tr>
+      <tr><td class="n">06</td><td>The HUD &amp; live telemetry</td></tr>
+      <tr><td class="n">07</td><td>Run modes, controls &amp; easter eggs</td></tr>
+      <tr><td class="n">08</td><td>Install &amp; build</td></tr>
+      <tr><td class="n">09</td><td>How to properly assess it — evaluation guide &amp; rubric</td></tr>
+    </table>
+
+    <div class="callout"><span class="lbl">Reading this guide</span>
+      <p style="margin:.3em 0 0">Each section first <b>explains a part of the aquarium</b>, then the final
+      section gives you a <b>repeatable way to assess</b> whether it is behaving correctly and looking right.</p>
+    </div>
+  </div>
+  <div class="footer"><span>01 · ORIENTATION</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ ARCHITECTURE ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">02 — Architecture</div>
+    <h1 style="font-size:26px">The Engine &amp; Its Modules</h1>
+    <p>A modular, mode-agnostic engine. The renderer knows nothing about “fish” specifically,
+    so future scenes (Space, Forest, Data Center…) can be added by swapping the water-layer
+    generator and the entity set — without rewriting the renderer.</p>
+
+    <table>
+      <tr><th>Module</th><th>Responsibility</th></tr>
+      <tr><td><code>app · __main__</code></td><td>CustomTkinter shell, run modes, key bindings, window/fullscreen handling.</td></tr>
+      <tr><td><code>engine</code></td><td>Frame-paced timing loop and smoothed FPS; orchestrates everything each frame.</td></tr>
+      <tr><td><code>scene</code></td><td>The world + the security-state machine; single source of truth.</td></tr>
+      <tr><td><code>renderer</code></td><td>Pillow water layer + pooled Canvas entity layer + vector effects.</td></tr>
+      <tr><td><code>entities · fish</code></td><td>Boids fish agents (cohesion / alignment / separation / flee).</td></tr>
+      <tr><td><code>predators · fauna</code></td><td>Shark threat predator + jellyfish, turtle, octopus, stingray, whale, shrimp.</td></tr>
+      <tr><td><code>ascii_art · ascii_generator</code></td><td>Sprite library + procedural fish (parts, colour, personality).</td></tr>
+      <tr><td><code>decor</code></td><td>Reef floor: coral, kelp, treasure, ruins, rocks.</td></tr>
+      <tr><td><code>particles</code></td><td>Bubbles + drifting motes (pooled, stochastic).</td></tr>
+      <tr><td><code>camera</code></td><td>Cinematic drift + breathing zoom.</td></tr>
+      <tr><td><code>effects</code></td><td>Sonar sweep, AI beam, glitch burst, threat alert pulse.</td></tr>
+      <tr><td><code>telemetry</code></td><td>Live <code>psutil</code> snapshot — the Nythos data feed seam.</td></tr>
+      <tr><td><code>hud · splash</code></td><td>Brand/status HUD + debug overlay; startup loading sequence.</td></tr>
+      <tr><td><code>easter_eggs · audio</code></td><td>Hidden key sequences + optional sonar pings.</td></tr>
+    </table>
+
+    <h3>Frame pipeline</h3>
+    <pre class="ascii">[telemetry thread]  psutil → Snapshot  ──────────────┐
+[main 60 FPS loop]  camera → scene.update → renderer.draw → hud.draw → present
+                                  │                        │
+                         state machine            water layer (≤12 Hz)
+                         + boids + effects        + pooled ASCII entities</pre>
+
+    <div class="callout"><span class="lbl">Why it stays smooth</span>
+      <p style="margin:.3em 0 0">The water layer is rendered small + blurred and regenerated at ~12&nbsp;Hz;
+      entity Canvas items are <b>pooled</b> (repositioned, never recreated); telemetry polling runs off the
+      UI thread. Allocations stay flat for 24/7 operation.</p>
+    </div>
+  </div>
+  <div class="footer"><span>02 · ARCHITECTURE</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ ANATOMY ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">03 — Anatomy of the Tank</div>
+    <h1 style="font-size:26px">Reading the Scene</h1>
+    <p>From back to front, the tank is composed in layers. Every layer moves — nothing is static.</p>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3 style="margin-top:0">Water layer</h3>
+        <ul>
+          <li><b>Depth gradient</b> — violet surface fading to abyssal black.</li>
+          <li><b>Volumetric light rays</b> drifting from the surface.</li>
+          <li><b>Fog pools</b> — soft violet glows that wander.</li>
+          <li><b>Threat tint</b> — the whole field darkens &amp; reddens under risk.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Reef &amp; decor</h3>
+        <ul>
+          <li><b>Coral</b> &amp; swaying <b>kelp</b> along the floor.</li>
+          <li><b>Treasure chest</b> stamped with the Nythos <code>N</code>.</li>
+          <li><b>Ruins</b>, <b>rocks</b> framing the depths.</li>
+          <li>Each item sways on its own phase — a living reef.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3 style="margin-top:0">Particles</h3>
+        <ul>
+          <li><b>Bubbles</b> rise &amp; wobble from the floor.</li>
+          <li><b>Motes</b> drift in the current.</li>
+          <li>Emission is stochastic — the field never visibly loops.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Camera</h3>
+        <ul>
+          <li>Slow <b>Lissajous drift</b> + faint breathing zoom.</li>
+          <li>Gives a hand-held, “alive” feel.</li>
+          <li>Never disorienting; toggle in settings.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>The reef floor</h3>
+    <pre class="ascii"> <span class="e">)  (   \|/    .Y..Y.</span>   ._____________.   <span class="e">\|/  )(</span>
+ <span class="e">(  )  \\|//  (|||||)</span>  /::::::::::::::/|  <span class="e">//|  (</span>
+ <span class="e">)  (   \|/    \|||/</span>   |####[###]####| |  <span class="e">\|   )</span>
+ <span class="o">~~~~~~~~~~~~~~~~~~~~~</span>  |##( N )######|/  <span class="o">~~~~~~~</span></pre>
+  </div>
+  <div class="footer"><span>03 · ANATOMY</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ INHABITANTS ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">04 — The Inhabitants</div>
+    <h1 style="font-size:26px">Fish, Fauna &amp; Behaviour</h1>
+    <p>Fish are procedurally generated in three detail tiers and rendered as multi-line ASCII
+    sprites. No two behave identically — each carries a personality vector.</p>
+
+    <table>
+      <tr><th>Tier</th><th>Rows</th><th>Role</th><th>Example</th></tr>
+      <tr><td>Micro</td><td>1</td><td>fast shoaling fry</td><td><code>&gt;&lt;(&deg;&gt;</code></td></tr>
+      <tr><td>Small</td><td>2</td><td>body + tail</td><td><code>&lt;:::::&deg;&gt;</code></td></tr>
+      <tr><td>Detailed</td><td>3–7</td><td>showpiece fish</td><td>reef · dart · pike · puffer · <b>koi</b> · <b>angelfish</b></td></tr>
+    </table>
+
+    <div class="grid2">
+      <div class="panel"><h3 style="margin-top:0">Angelfish</h3>
+        <pre class="ascii"><span class="v">       /\
+      /::\___
+   __/:::::: \
+ &lt;=&lt;::::::::: O&gt;
+   ‾‾\:::::: /
+      \::/‾‾‾
+       \/</span></pre>
+        <p class="muted" style="margin:0">Tall triangular body, long dorsal &amp; anal fins, streamer tail.</p>
+      </div>
+      <div class="panel"><h3 style="margin-top:0">Koi</h3>
+        <pre class="ascii"><span class="o">          _______
+    _.-~ /&middot;&deg;:&middot;:&deg;&middot;\ ~-._
+  &lt;~~(::::&deg;:&middot;:&deg;::::: O &gt;~
+    '-~ \&middot;&deg;:&middot;:&deg;&middot;/ ~-'
+          ‾‾‾‾‾‾‾</span></pre>
+        <p class="muted" style="margin:0">Long flowing body, barbels, spotted pattern, trailing fins.</p>
+      </div>
+    </div>
+
+    <h3>Boids — how they swim</h3>
+    <p>Movement emerges from classic steering behaviours, blended per-fish by personality:</p>
+    <p>
+      <span class="chip">cohesion</span><span class="chip">alignment</span><span class="chip">separation</span>
+      <span class="chip">wander</span><span class="chip">edge-avoid</span><span class="chip tagr">predator-flee</span>
+      <span class="chip tag">food-seek</span>
+    </p>
+    <table>
+      <tr><th>Trait</th><th>Effect</th></tr>
+      <tr><td>speed / energy</td><td>cruise speed and how hard it darts when startled</td></tr>
+      <tr><td>schooling</td><td>how strongly it joins its species’ shoal</td></tr>
+      <tr><td>curiosity</td><td>attraction toward sonar / new events</td></tr>
+      <tr><td>depth band</td><td>preferred vertical zone in the water column</td></tr>
+    </table>
+
+    <h3>Ambient fauna</h3>
+    <p><span class="chip">jellyfish</span><span class="chip">sea turtle</span><span class="chip">octopus</span>
+       <span class="chip">stingray</span><span class="chip">whale</span><span class="chip">shrimp</span>
+       — lower-density characters that drift through for variety.</p>
+  </div>
+  <div class="footer"><span>04 · INHABITANTS</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ SECURITY VIZ ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">05 — Security Visualization</div>
+    <h1 style="font-size:26px">What the Tank Is Telling You</h1>
+    <p>This is the heart of Aquarium Mode: every behaviour maps to a real signal. Learn this table
+    and you can read endpoint health at a glance.</p>
+
+    <table>
+      <tr><th>Signal</th><th>In the aquarium</th></tr>
+      <tr><td>Low load, low risk</td><td><span class="tag">HEALTHY</span> — calm violet water, relaxed schooling, soft bubbles.</td></tr>
+      <tr><td>High CPU</td><td><span class="tagv">BUSY</span> — livelier fish, stronger current.</td></tr>
+      <tr><td>Risk score crosses threshold</td><td><span class="tagr">THREAT</span> — water darkens &amp; reddens, a <b>predator</b> appears, schools scatter, glitch burst.</td></tr>
+      <tr><td>Network spike</td><td><b>Sonar sweep</b> expands; curious fish investigate.</td></tr>
+      <tr><td>Periodic inspection</td><td><b>AI analysis beam</b> scans a “suspicious” fish, then it returns to normal.</td></tr>
+    </table>
+
+    <div class="grid2">
+      <div class="panel"><h3 style="margin-top:0">The predator (ransomware)</h3>
+        <pre class="ascii"><span class="tagr">           ___
+      ,--''   `.
+ ___/  o    `--.__
+(____  ><  ____/&gt;
+     \__    _.-'
+        `--'</span></pre>
+        <p class="muted" style="margin:0">Hunts the nearest fish and sweeps across the tank, then leaves. Its presence is what tips the water into the threat state.</p>
+      </div>
+      <div class="panel"><h3 style="margin-top:0">Sonar &amp; AI beam</h3>
+        <p style="margin-top:0"><b class="tagv">Sonar</b> — an expanding cyan ring fired on network bursts; fish with high curiosity swim toward it.</p>
+        <p><b class="tag">AI analysis</b> — a dashed beam drops from the surface with a reticle box and the label <code>AI ANALYSIS</code>. The inspected fish pulses emerald, then resumes normal behaviour — “analyzed &amp; cleared.”</p>
+      </div>
+    </div>
+
+    <div class="callout"><span class="lbl">Design principle</span>
+      <p style="margin:.3em 0 0">Educational, not alarming. Bright red is reserved <b>only</b> for an active threat —
+      everything else lives in the calm violet/cyan/emerald palette.</p>
+    </div>
+  </div>
+  <div class="footer"><span>05 · SECURITY VISUALIZATION</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ HUD + TELEMETRY ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">06 — HUD &amp; Telemetry</div>
+    <h1 style="font-size:26px">The Dashboard Overlay</h1>
+    <p>A semi-transparent HUD floats over the tank. It is intentionally minimal — status at a glance,
+    detail on demand.</p>
+
+    <table>
+      <tr><th>Element</th><th>Where</th><th>Shows</th></tr>
+      <tr><td>Brand</td><td>top-left</td><td><b>NYTHOS · AQUARIUM MODE</b></td></tr>
+      <tr><td>Status</td><td>top-right</td><td><span class="tag">● SECURE</span> / <span class="tagv">● ACTIVE</span> / <span class="tagr">▲ THREAT DETECTED</span></td></tr>
+      <tr><td>Scores</td><td>top-right</td><td>Health &amp; Risk (0–100)</td></tr>
+      <tr><td>Telemetry</td><td>top-right</td><td>CPU % · MEM % · NET KB/s</td></tr>
+      <tr><td>Debug overlay</td><td>bottom-left</td><td>FPS, entity/particle counts, RSS memory, process count (type <code>debug</code>)</td></tr>
+    </table>
+
+    <h3>How telemetry drives the tank</h3>
+    <p>The <code>telemetry</code> module polls real metrics with <code>psutil</code> on a background thread
+    and maps them onto the scene:</p>
+    <table>
+      <tr><th>Metric</th><th>Drives</th></tr>
+      <tr><td>CPU load</td><td>fish liveliness + current strength; the BUSY state</td></tr>
+      <tr><td>Memory / process pressure</td><td>feeds the composite <b>risk score</b></td></tr>
+      <tr><td>Network throughput</td><td>spikes trigger sonar sweeps</td></tr>
+      <tr><td>Risk threshold</td><td>flips the scene into THREAT (predator + scatter)</td></tr>
+    </table>
+
+    <div class="callout"><span class="lbl">Integration seam</span>
+      <p style="margin:.3em 0 0">Replace <code>Telemetry._sample()</code> with the real Nythos agent feed
+      (threat detections, open ports, service/app inventory, endpoint health score) and every visual reacts
+      automatically. The aquarium is data-driven — never random — whenever live data exists.</p>
+    </div>
+  </div>
+  <div class="footer"><span>06 · HUD &amp; TELEMETRY</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ CONTROLS + INSTALL ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">07 — Modes, Controls &amp; Eggs</div>
+    <h1 style="font-size:26px">Driving the Aquarium</h1>
+
+    <div class="grid2">
+      <div class="panel"><h3 style="margin-top:0">Run modes</h3>
+        <table>
+          <tr><th>Mode</th><th>Use</th></tr>
+          <tr><td><code>windowed</code></td><td>dev / background dashboard</td></tr>
+          <tr><td><code>fullscreen</code></td><td>splash + full experience</td></tr>
+          <tr><td><code>screensaver</code></td><td>exits on any input</td></tr>
+          <tr><td><code>kiosk</code></td><td>conference / demo machine</td></tr>
+        </table>
+      </div>
+      <div class="panel"><h3 style="margin-top:0">Controls</h3>
+        <p><span class="chip">Esc</span> exit &nbsp; <span class="chip">F11 / F</span> toggle fullscreen<br>
+           <span class="chip">F2</span> windowed dashboard &nbsp; <span class="chip">H</span> HUD &nbsp; <span class="chip">M</span> audio<br>
+           <span class="chip tagr">T</span> demo threat &nbsp; <span class="chip">S</span> sonar &nbsp; <span class="chip">W</span> whale<br>
+           <span class="chip">+ / −</span> add / remove a fish</p>
+      </div>
+    </div>
+
+    <h3>Easter eggs</h3>
+    <table>
+      <tr><th>Trigger</th><th>Effect</th></tr>
+      <tr><td>Konami code</td><td>fish become dragons</td></tr>
+      <tr><td>type <code>fredo</code></td><td>a scuba diver with a glowing laptop appears</td></tr>
+      <tr><td>type <code>mythos</code></td><td>a giant phoenix silhouette beneath the water</td></tr>
+      <tr><td>type <code>debug</code></td><td>FPS / entity counts / telemetry / memory overlay</td></tr>
+    </table>
+
+    <div class="eyebrow" style="margin-top:14px">08 — Install</div>
+    <h2>Install as a Program</h2>
+    <pre class="ascii" style="color:var(--emerald);text-shadow:0 0 8px rgba(43,245,160,.5)">&gt; pwsh -ExecutionPolicy Bypass -File build_exe.ps1        # → dist\NythosAquarium.exe
+&gt; pwsh -ExecutionPolicy Bypass -File install_aquarium.ps1 # shortcuts + uninstall entry</pre>
+    <p>Installs per-user to <code>%LOCALAPPDATA%\Programs\NythosAquarium</code> with Start Menu &amp; Desktop
+    shortcuts and an entry under <b>Settings › Apps</b>. Or run from source: <code>python -m aquarium --mode fullscreen</code>.</p>
+  </div>
+  <div class="footer"><span>07–08 · CONTROLS &amp; INSTALL</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+<!-- ============================ ASSESSMENT ============================ -->
+<section class="page">
+  <div class="frame"></div>
+  <div class="content">
+    <div class="eyebrow">09 — Assessment</div>
+    <h1 style="font-size:26px">How to Properly Assess It</h1>
+    <p>Use this as a repeatable evaluation pass. Run in <code>fullscreen</code>, let it settle ~30&nbsp;s,
+    then type <code>debug</code> to reveal the live stats overlay before scoring.</p>
+
+    <div class="grid2">
+      <div class="panel"><h3 style="margin-top:0">A · Visual quality</h3>
+        <ul class="check">
+          <li>Depth gradient + light rays read as deep ocean</li>
+          <li>Fish are recognisable, varied, not copy-pasted</li>
+          <li>Reef, treasure &amp; kelp anchor the floor</li>
+          <li>Palette stays violet/cyan; red only on threat</li>
+          <li>No flicker, tearing, or popping at edges</li>
+        </ul>
+      </div>
+      <div class="panel"><h3 style="margin-top:0">B · Behavioural realism</h3>
+        <ul class="check">
+          <li>Fish school, separate &amp; wander organically</li>
+          <li>No two fish move identically</li>
+          <li>Schools scatter from the predator (press <code>T</code>)</li>
+          <li>Curious fish drift toward sonar (press <code>S</code>)</li>
+          <li>Fish stay in the water column, above the reef</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel"><h3 style="margin-top:0">C · Security mapping</h3>
+        <ul class="check">
+          <li>Status matches load (SECURE / ACTIVE / THREAT)</li>
+          <li>Health &amp; Risk track CPU/MEM in the HUD</li>
+          <li>Threat demo darkens water + spawns predator</li>
+          <li>AI beam appears periodically &amp; clears a fish</li>
+          <li>Network activity triggers a sonar sweep</li>
+        </ul>
+      </div>
+      <div class="panel"><h3 style="margin-top:0">D · Performance &amp; stability</h3>
+        <ul class="check">
+          <li><b>FPS</b> ≥ 30 windowed (target 60); steady, no stutter</li>
+          <li><b>RSS memory</b> flat over time (no leak)</li>
+          <li>CPU reasonable while idle</li>
+          <li>Survives resize, F11/F2 toggling, long run</li>
+          <li>Splash always completes in ~4–5&nbsp;s</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Measuring performance</h3>
+    <p>The <code>debug</code> overlay (bottom-left) reports <b>FPS</b>, fish / fauna / particle / effect counts,
+    and process <b>RSS</b> memory. Watch RSS for a minute — it should hold steady. If FPS sags on a very
+    large tank, lower the fish count (<code>−</code>) or background quality; the engine is built to degrade
+    gracefully.</p>
+
+    <h3>Scoring rubric</h3>
+    <table>
+      <tr><th>Band</th><th>Visual</th><th>Behaviour</th><th>Mapping</th><th>Perf</th></tr>
+      <tr><td><b>Excellent</b></td><td>cinematic, cohesive</td><td>clearly organic</td><td>all signals correct</td><td>60 FPS, flat RSS</td></tr>
+      <tr><td><b>Good</b></td><td>polished, minor nits</td><td>believable</td><td>states correct</td><td>≥40 FPS, stable</td></tr>
+      <tr><td><b>Needs work</b></td><td>flat / repetitive</td><td>robotic</td><td>signals miswired</td><td>&lt;30 FPS or leak</td></tr>
+    </table>
+
+    <div class="callout warn"><span class="lbl">Known trade-off</span>
+      <p style="margin:.3em 0 0">Tkinter Canvas text is CPU-bound; a very large tank at 4K can dip below 60 FPS.
+      That is the boundary the optional OpenGL backend (roadmap) is designed to cross. At the default fish
+      count it runs smoothly.</p>
+    </div>
+  </div>
+  <div class="footer"><span>09 · ASSESSMENT</span><span>NYTHOS AQUARIUM MODE — FIELD GUIDE</span></div>
+</section>
+
+</body>
+</html>

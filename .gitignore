@@ -1,0 +1,19 @@
+## Build artifacts
+build/
+dist/
+
+## Python
+__pycache__/
+*.pyc
+*.pyo
+
+## Claude Code local settings
+.claude/settings.local.json
+
+## Resource compiler temp files
+resources/RCa*
+
+## Editor/OS cruft
+.vs/
+*.user
+Thumbs.db
