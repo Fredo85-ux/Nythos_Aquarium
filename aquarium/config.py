@@ -11,9 +11,26 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
+# --- Theme --------------------------------------------------------------
+# Mirrors the .scr's `enum class Theme { Reef, Abyss, Cyberpunk }`
+# (src/Settings.h) — only the water depth gradient changes per theme there
+# (see ThemeShallow/ThemeDeep in shaders/scene.hlsl), so that's all a theme
+# swap touches here too. Values are the shader's linear 0..1 colours scaled
+# to 0..255; MID is interpolated the same way the .scr's depth curve settles
+# roughly 60% of the way toward the deep colour.
+THEME_NAMES = ("reef", "abyss", "cyberpunk")
+
+_THEMES = {
+    "reef":      {"BG_TOP": (15, 56, 87), "BG_MID": (8, 30, 52),  "BG_DEEP": (4, 13, 28)},
+    "abyss":     {"BG_TOP": (10, 26, 46), "BG_MID": (6, 13, 26),  "BG_DEEP": (3, 5, 13)},
+    "cyberpunk": {"BG_TOP": (26, 10, 58), "BG_MID": (11, 4, 32),  "BG_DEEP": (5, 1, 14)},
+}
+
+
 # --- Palette ----------------------------------------------------------------
 class Palette:
-    # Water / background depth gradient (top -> bottom)
+    # Water / background depth gradient (top -> bottom). Default theme is
+    # "cyberpunk" — the Nythos identity these were originally tuned for.
     BG_TOP    = (26, 10, 58)     # electric-violet tinted surface
     BG_MID    = (11, 4, 32)      # deep purple
     BG_DEEP   = (5, 1, 14)       # near-black abyss
@@ -31,6 +48,15 @@ class Palette:
 
     # Fish palettes for procedural colouring (healthy ocean)
     FISH = [CYAN, BLUE, VIOLET, VIOLET_HI, EMERALD, (90, 200, 255), (180, 120, 255)]
+
+    @classmethod
+    def apply_theme(cls, name: str) -> None:
+        """Swap the water gradient to match a .scr theme. Accent/HUD/fish
+        colours are intentionally left alone — the .scr doesn't vary those
+        by theme either (see shaders/scene.hlsl: uTheme only feeds
+        PSBackground)."""
+        t = _THEMES.get(name, _THEMES["cyberpunk"])
+        cls.BG_TOP, cls.BG_MID, cls.BG_DEEP = t["BG_TOP"], t["BG_MID"], t["BG_DEEP"]
 
 
 def rgb(c: tuple[int, int, int]) -> str:
@@ -65,6 +91,7 @@ class Settings:
     show_tips: bool = True
     use_telemetry: bool = True
     quality: str = "high"          # "low" | "med" | "high"
+    theme: str = "cyberpunk"       # "reef" | "abyss" | "cyberpunk" (see THEME_NAMES)
 
     # Background regeneration cadence (Hz). The PIL water layer is expensive,
     # so it animates slower than the 60 FPS entity layer — the eye doesn't

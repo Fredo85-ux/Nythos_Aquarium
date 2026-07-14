@@ -14,6 +14,7 @@ Keyboard:
     F2             drop to the windowed dashboard (from any mode)
     H              toggle HUD          M  toggle audio
     T              demo threat         S  manual sonar sweep
+    P              cycle theme (Reef / Abyss / Cyberpunk)
     + / -          add / remove fish   (debug overlay: type "debug")
 Plus the hidden easter-egg sequences (see easter_eggs.py).
 """
@@ -21,7 +22,7 @@ from __future__ import annotations
 import random
 import customtkinter as ctk
 
-from .config import Settings, rgb, Palette
+from .config import Settings, rgb, Palette, THEME_NAMES
 from . import settings as settings_io
 from .telemetry import Telemetry
 from .audio import Audio
@@ -36,6 +37,7 @@ class AquariumApp(ctk.CTk):
         self.mode = mode
         self.s: Settings = settings_io.load()
         self.rng = random.Random()
+        Palette.apply_theme(self.s.theme)
 
         ctk.set_appearance_mode("dark")
         # Drive geometry in real pixels — CustomTkinter's automatic window
@@ -233,11 +235,21 @@ class AquariumApp(ctk.CTk):
             self.scene.trigger_sonar(self.s.width / 2, self.s.height / 2)
         elif low == "w":
             self.scene.spawn_whale()
+        elif low == "p":
+            self._cycle_theme()
         elif k in ("plus", "equal", "KP_Add"):
             self.scene.add_fish()
         elif k in ("minus", "KP_Subtract"):
             if self.scene.fish:
                 self.scene.fish.pop()
+
+    def _cycle_theme(self):
+        i = THEME_NAMES.index(self.s.theme) if self.s.theme in THEME_NAMES else 0
+        self.s.theme = THEME_NAMES[(i + 1) % len(THEME_NAMES)]
+        Palette.apply_theme(self.s.theme)
+        self.configure(fg_color=rgb(Palette.BG_DEEP))
+        self.canvas.configure(bg=rgb(Palette.BG_DEEP))
+        self.engine.renderer._build_water_static()
 
     def _quit(self):
         self.engine.stop()
