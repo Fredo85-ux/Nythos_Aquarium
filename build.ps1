@@ -36,9 +36,29 @@ foreach ($name in $map.Keys) {
 Set-Content -Path $genPath -Value $sb.ToString() -Encoding UTF8
 Write-Host "      -> $genPath"
 
-# --- locate vcvars -----------------------------------------------------------
-$vcvars = "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat"
-if (!(Test-Path $vcvars)) { throw "vcvars64.bat not found at $vcvars" }
+# --- locate vcvars (portable across VS version/edition, incl. CI runners) ----
+$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$vcvars = $null
+if (Test-Path $vswhere) {
+    $vsPath = & $vswhere -latest -products * `
+        -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+        -property installationPath
+    if ($vsPath) {
+        $candidate = Join-Path $vsPath "VC\Auxiliary\Build\vcvars64.bat"
+        if (Test-Path $candidate) { $vcvars = $candidate }
+    }
+}
+if (!$vcvars) {
+    # Fallback: check common hardcoded locations (adjust if you install elsewhere)
+    foreach ($p in @(
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat",
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat",
+        "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat"
+    )) {
+        if (Test-Path $p) { $vcvars = $p; break }
+    }
+}
+if (!$vcvars) { throw "vcvars64.bat not found — is the Desktop C++ workload installed?" }
 
 # --- 2 + 3. Compile resources, then sources, inside the VC environment -------
 $cpps = (Get-ChildItem -Path $src -Filter *.cpp | ForEach-Object { '"' + $_.FullName + '"' }) -join ' '
